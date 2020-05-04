@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 
 function App() {
-  return <NoughtsCrosses />;
+  return (
+    <main>
+      <NoughtsCrosses />
+    </main>
+  );
 }
 
 function NoughtsCrosses() {
@@ -30,13 +34,25 @@ function NoughtsCrosses() {
 
   return (
     <>
-      <h1>Noughts and Crosses</h1>
-      <button onClick={newGame}>New Game</button>
-      <p>
+      <h1 id="title">Noughts and Crosses</h1>
+      <ul className="actions">
+        <li>
+          <button className="action" onClick={newGame}>
+            New Game
+          </button>
+        </li>
+      </ul>
+      <p className="status">
         Next Player:
-        {isXNext ? ' X' : ' O'}
+        {isXNext ? <strong> X</strong> : <strong> O</strong>}
       </p>
-      {winner && <p>{`The winner is ${winner}!`}</p>}
+      {winner && (
+        <p className="status">
+          The winner is
+          {winner === 'X' ? <strong> X</strong> : <strong> O</strong>}
+          !
+        </p>
+      )}
       <Board board={board} handlePlay={handlePlay} />
       <History history={history} game={game} setGame={setGame} />
     </>
@@ -45,22 +61,18 @@ function NoughtsCrosses() {
 
 function Board({ board, handlePlay }) {
   return (
-    <>
+    <div id="board">
       {board.map((slot, i) => (
         <Cell key={Ids.new()} play={() => handlePlay(i)} value={board[i]} />
       ))}
-    </>
+    </div>
   );
 }
 
 function Cell({ value, play }) {
   return (
     <button onClick={play} className="game-cell">
-      __
-      {' '}
       {value}
-      {' '}
-      __
     </button>
   );
 }
@@ -72,7 +84,7 @@ function History({ history, game, setGame }) {
     setGame(newGame);
   }
   return (
-    <>
+    <div>
       <h2>History</h2>
       {history.length > 1 && (
         <p>
@@ -83,11 +95,25 @@ function History({ history, game, setGame }) {
       <ol>
         {history.map((board, i) => (
           <li key={Ids.new()} onClick={() => travelToMove(i)}>
-            {i > 0 ? `Go to move ${i}` : 'Go to start'}
+            {i > 0 ? (
+              <p>
+                Go to move
+                <strong>
+                  {' '}
+                  {i}
+                </strong>
+              </p>
+            ) : (
+              <p>
+                Go to
+                {' '}
+                <strong>START</strong>
+              </p>
+            )}
           </li>
         ))}
       </ol>
-    </>
+    </div>
   );
 }
 
@@ -105,8 +131,8 @@ function getWinner(board) {
   for (let i = 0; i < winningLines.length; i++) {
     const [a, b, c] = winningLines[i];
     if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
-    return null;
   }
+  return null;
 }
 
 // what are better solutions for this?
